@@ -16,9 +16,13 @@ int main(int argc, char **argv) {
   Mat imgOriginal;
   Mat imgThresholded;
   Mat imgContoured;
+  Mat imgEroded;
+  Mat imgDialated;
+  Mat imgGreyscale[3];
   Mat imgThresholdedCanny;
   Mat imgHSV;
   Mat image;
+
 
   if (argc > 1) { // has at least one passed var (image)
     usingImage = true;
@@ -39,6 +43,8 @@ int main(int argc, char **argv) {
   int iHighS = 255;
   int iLowV = 0;
   int iHighV = 255;
+  int erosionSize = 0;
+  int dialationSize = 0;
   int cannyThreshold = 100;
 
   // make a slider for each value for hsv
@@ -48,7 +54,9 @@ int main(int argc, char **argv) {
   createTrackbar("HighS", "Control", &iHighS, 255);
   createTrackbar("LowV", "Control", &iLowV, 255); // Value (0 - 255)
   createTrackbar("HighV", "Control", &iHighV, 255);
-  createTrackbar("Canny Threshold", "Control", &cannyThreshold, 255);
+  createTrackbar("Canny Threshold", "Control", &cannyThreshold, 100);
+  createTrackbar("Erode", "Control", &erosionSize, 2);
+  createTrackbar("Dialate", "Control", &dialationSize, 2);
 
   vector<vector<Point>> contours;
   vector<Vec4i> hierarchy;
@@ -71,15 +79,24 @@ int main(int argc, char **argv) {
     inRange(imgHSV, Scalar(iLowH, iLowS, iLowV), Scalar(iHighH, iHighS, iHighV),
             imgThresholded);
 
-    // morphological opening (remove small objects from the foreground)
-    erode(imgThresholded, imgThresholded,
-          getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
-    dilate(imgThresholded, imgThresholded,
-           getStructuringElement(MORPH_ELLIPSE, Size(5, 5)));
+	//erode  
+    erode(imgThresholded, imgEroded, getStructuringElement(MORPH_ELLIPSE, Size(2*erosionSize+1, 2*erosionSize+1), Point(erosionSize, erosionSize)));
+
+	//dialate
+	dilate(imgEroded, imgDialated, getStructuringElement(MORPH_ELLIPSE, Size(2*dialationSize+1, 2*dialationSize+1), Point(dialationSize, dialationSize)));
+
+	//go from hsv to greyscale (just value) in order to use canny
+//	split(imgDialated, imgGreyscale);
+//	cout << imgGreyscale[0] << endl << imgGreyscale[1] << endl << imgGreyscale[2]<< endl;
+//	Mat imgValue;
+	//imgGreyscale[2].convertTo(imgValue, CV_8U);
+	//imgGreyscale[2] should be V
+	
+//	if(!imgValue.empty()) imshow("Value", imgValue);
 
     // edge detection using the Canny edge detection alg
-    Canny(imgThresholded, imgThresholdedCanny, cannyThreshold,
-          cannyThreshold * 2);
+    Canny(imgEroded, imgThresholdedCanny, cannyThreshold, cannyThreshold * 2);
+//	if(!imgThresholdedCanny.empty()) imshow("imgThresholdedCanny", imgThresholdedCanny);
 
     findContours(imgThresholdedCanny, contours, hierarchy, RETR_TREE, CHAIN_APPROX_SIMPLE);
     cout << "Contours size: " << contours.size() << endl;
@@ -97,7 +114,7 @@ int main(int argc, char **argv) {
     imshow("Original", imgOriginal);
 
     // quit when you press any key
-    if (waitKey(30) > 0) {
+    if (waitKey(30) == 27) {
       break;
     }
 
