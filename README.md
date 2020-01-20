@@ -8,4 +8,7 @@ Use your webcam:
 `./opencv`
 
 Use an image:
-`./opencv [image]`
+`./opencv i [image]`
+
+Use a Video:
+`./opencv v [video]`
