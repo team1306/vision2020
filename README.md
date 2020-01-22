@@ -1,14 +1,26 @@
 # vision2020
 Trying to get vision working for the 2020 season
 
-Compiling using g++:
-`g++ cv.cpp -g -Wall -Wextra -pedantic -o opencv -I/usr/include/opencv4 -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs`
+## Compiling image.cpp and trajectory.cpp
+`g++ image.cpp trajectory.cpp -g -Wall -Wextra -pedantic -o vision -I/usr/include/opencv4 -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs`
 
-Use your webcam:
-`./opencv`
+Running image.cpp and trajectory.cpp:
+`./vision <image or video> <path to image or video> [Run with GUI]`>
 
-Use an image:
-`./opencv i [image]`
+## Compiling image.cpp using g++:
+`g++ image.cpp trajectory.cpp -g -Wall -Wextra -pedantic -o image -I/usr/include/opencv4 -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs`
 
-Use a Video:
-`./opencv v [video]`
+Syntax:
+`./image <image or video> <path to image or video> [Run with GUI]`
+
+Running image.cpp using your webcam:
+`./image [y/n]`
+
+Running image.cpp using an image or video:
+`./image <i/v> <image> [y/n]`
+
+## Compiling trajectory.cpp using g++:
+`g++ trajectory.cpp -g -Wall -Wextra -pedantic -o trajectory`
+
+Running trajectory.cpp:
+`./trajectory`
