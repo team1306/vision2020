@@ -8,12 +8,14 @@
 using namespace cv;
 using namespace std;
 
-//TODO
-//  =>>maybe mess with CHAIN_APPROX_SIMPLE
-//  =>>to erase case being hit for some reason. Changing hsv after contours generated might not be working as well as previously thought
-// BUGS
-= >> When running with a GUI, you have to close the GUI in order to run the calcuations.This is because
-                              /**
+/*
+ * 
+ * TODO
+ *  =>>maybe mess with CHAIN_APPROX_SIMPLE
+ *  =>>to erase case being hit for some reason. Changing hsv after contours generated might not be working as well as previously thought
+ * // BUGS
+ * = >> When running with a GUI, you have to close the GUI in order to run the calcuations.This is because
+ * 
  * Compile using `g++ image.cpp -g -Wall -Wextra -pedantic -o opencv -I/usr/include/opencv4 -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs`
  * Run using `./image <i or v> <path to image or video> <y or n>
  * E.g. ./image i image.jpg
@@ -23,12 +25,10 @@ using namespace std;
  * Flags:
  * - i for image
  * - v for video
- * - y for run with gui
- * - n with run without gui
-
+ * - y/n to run with/without gui
  */
 
-                              bool usingImage = true;
+bool usingImage = true;
 VideoCapture cap(0);
 
 //rest of the Mats
