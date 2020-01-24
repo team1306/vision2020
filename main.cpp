@@ -2,6 +2,13 @@
 
 int main(int argc, char **argv)
 {
-    image(argc, argv);
-    calcTrajectory();
+    try
+    {
+        image(argc, argv);
+        calcAndSendTrajectory();
+    }
+    catch (...)
+    {
+        sendLed(RED); //LED ERROR MESSAGE - RED
+    }
 }

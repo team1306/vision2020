@@ -9,12 +9,11 @@ using namespace cv;
 using namespace std;
 
 /*
- * 
  * TODO
- *  =>>maybe mess with CHAIN_APPROX_SIMPLE
- *  =>>to erase case being hit for some reason. Changing hsv after contours generated might not be working as well as previously thought
- * // BUGS
- * = >> When running with a GUI, you have to close the GUI in order to run the calcuations.This is because
+ *  =>> Maybe mess with CHAIN_APPROX_SIMPLE
+ *  =>> To erase case being hit for some reason. Changing hsv after contours generated might not be working as well as previously thought
+ * BUGS
+    =>> When running with a GUI, you have to close the GUI in order to run the calcuations.This is because
  * 
  * Compile using `g++ image.cpp -g -Wall -Wextra -pedantic -o opencv -I/usr/include/opencv4 -lopencv_core -lopencv_highgui -lopencv_imgproc -lopencv_videoio -lopencv_imgcodecs`
  * Run using `./image <i or v> <path to image or video> <y or n>
@@ -346,7 +345,11 @@ void drawAndUpdate(int pos, void *data)
     }
 
     //set bounding rect points... only works if there's 1 contour
-    if (contours.size() == 1)
+    if (contours.size() == 0)
+    {
+      sendLed(MAGENTA); //LED ERROR MESSAGE - MAGENTA
+    }
+    else if (contours.size() == 1)
     {
       try
       { /* */
@@ -362,14 +365,18 @@ void drawAndUpdate(int pos, void *data)
         imageHeight = imgDraw.size().height;
 
         cout << "Header variables set" << endl;
+
+        sendLed(GREEN); //LED ERROR MESSAGE - GREEN
       }
       catch (...)
       {
         cout << "Exception caught while setting header variables" << endl;
       }
     }
-    else if (contours.size() != 1)
+    else if (contours.size() > 1)
     {
+      sendLed(BLUE); //LED ERROR MESSAGE - BLUE
+
       cout << "Bounding rectangle points couldn't be sent because there is more than one contour" << endl;
     }
 
