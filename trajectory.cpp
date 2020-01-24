@@ -24,14 +24,30 @@ double boundingBoxMidpointX = 0; // Midpoint of the bounding box on the X axis
 double imageMidpointX = 0;       // Midpoint of the image on the X axis
 double yawOffset = 0;            // Yaw offset in degrees
 
+//returned vars
+double returnedDistance = 0;
+double returnedHorizontalAngle = 0;
+
 //declare function
 double getDistance();
 double getHorizAngle();
 
-void calcTrajectory()
+void calcAndSendTrajectory()
+
 {
-    cout << "The target is " << getDistance() << " inches away" << endl;
-    cout << "The target is " << getHorizAngle() << " degrees away from center" << endl;
+    try
+    {
+        returnedDistance = getDistance();
+        returnedHorizontalAngle = getHorizAngle();
+        cout << "The target is " << returnedDistance << " inches away" << endl;
+        cout << "The target is " << returnedHorizontalAngle << " degrees away from center" << endl;
+
+        sendTrajectoryValues(returnedHorizontalAngle, returnedDistance);
+    }
+    catch (...)
+    {
+        sendLed(CYAN); //LED ERROR MESSAGE - CYAN
+    }
 }
 
 double pxToDegrees(double pixel, int orientation) //0 for horizontal 1 for vertical
