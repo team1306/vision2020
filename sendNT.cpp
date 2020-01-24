@@ -11,7 +11,7 @@ void sendLed(int r, int g, int b)
     cout << "Setting Leds to " << ledString << endl;
     try
     {
-        //send over NT TODO
+//       nt::NetworkTableInstance::GetInstance().GetTable("vision").PutString("status color", ledString);
     }
     catch (...)
     {
@@ -25,7 +25,7 @@ void sendLed(const std::string &ledString)
     cout << "Setting Leds to " << ledString << endl;
     try
     {
-        //send over NT TODO
+//        nt::NetworkTableInstance::GetInstance().GetTable("vision").PutString("status color", ledString);
     }
     catch (...)
     {
@@ -38,7 +38,8 @@ void sendTrajectoryValues(double heading, double distance)
 {
     try
     {
-        //send over NT TODO
+    //    nt::NetworkTableInstance::GetInstance().GetTable("vision").PutNumber("heading", heading);
+    //    nt::NetworkTableInstance::GetInstance().GetTable("vision").PutNumber("distance", distance);
     }
     catch (...)
     {

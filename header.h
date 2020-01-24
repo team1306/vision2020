@@ -18,3 +18,4 @@ void calcAndSendTrajectory();
 void sendLed(int r, int g, int b);
 void sendLed(const std::string &ledString);
 void sendTrajectoryValues(double heading, double distance);
+double pxToDegrees(double pixel, int orientation);
