@@ -1,11 +1,11 @@
 #include "MyPipeline.h"
 
-const double MyPipeline::thresh_hue[] = {0, 255};
+const double MyPipeline::thresh_hue[] = {65, 81};
 const double MyPipeline::thresh_sat[] = {0, 255};
-const double MyPipeline::thresh_val[] = {200, 255};
+const double MyPipeline::thresh_val[] = {30, 255};
 
 const int MyPipeline::erosionSize = 0;
-const int MyPipeline::dilationSize = 0;
+const int MyPipeline::dilationSize = 2;
 
 MyPipeline::MyPipeline()
     : contourResults()
