@@ -33,7 +33,7 @@ void MyPipeline::thresholdHSV(cv::Mat &input, cv::Mat &output,
                               const double hue[], const double sat[], const double val[])
 {
     cvtColor(input, output, CV_BGR2HSV);
-    inRange(input, cv::Scalar(hue[0], sat[0], val[0]), cv::Scalar(hue[1], sat[1], val[1]), output);
+    inRange(output, cv::Scalar(hue[0], sat[0], val[0]), cv::Scalar(hue[1], sat[1], val[1]), output);
 }
 
 void MyPipeline::erodeSize(cv::Mat &input, cv::Mat &output, int size)
