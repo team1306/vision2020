@@ -67,7 +67,7 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
 
     for (long unsigned i = 0; i < output.size(); i++)
     {
-        if (!contourArea(output[i]) < 50)
+        if (contourArea(output[i]) >= 50)
         {
             goodContours.push_back(output[i]);
         }
