@@ -9,27 +9,27 @@
         },
         {
             "name": "raw_brightness",
-            "value": 25
+            "value": 6
         },
         {
             "name": "brightness",
-            "value": 25
+            "value": 6
         },
         {
             "name": "raw_contrast",
-            "value": 32
+            "value": 74
         },
         {
             "name": "contrast",
-            "value": 66
+            "value": 87
         },
         {
             "name": "raw_saturation",
-            "value": 0
+            "value": 44
         },
         {
             "name": "saturation",
-            "value": 50
+            "value": 72
         },
         {
             "name": "red_balance",
@@ -41,23 +41,23 @@
         },
         {
             "name": "horizontal_flip",
-            "value": false
+            "value": true
         },
         {
             "name": "vertical_flip",
-            "value": false
+            "value": true
         },
         {
             "name": "power_line_frequency",
-            "value": 1
+            "value": 3
         },
         {
             "name": "raw_sharpness",
-            "value": 0
+            "value": 2
         },
         {
             "name": "sharpness",
-            "value": 50
+            "value": 51
         },
         {
             "name": "color_effects",
@@ -65,15 +65,15 @@
         },
         {
             "name": "rotate",
-            "value": 90
+            "value": 0
         },
         {
             "name": "color_effects_cbcr",
-            "value": 30718
+            "value": 8665
         },
         {
             "name": "video_bitrate_mode",
-            "value": 1
+            "value": 0
         },
         {
             "name": "video_bitrate",
@@ -129,7 +129,7 @@
         },
         {
             "name": "iso_sensitivity_auto",
-            "value": 1
+            "value": 0
         },
         {
             "name": "exposure_metering_mode",
@@ -141,7 +141,7 @@
         },
         {
             "name": "compression_quality",
-            "value": 30
+            "value": 1
         }
     ],
     "width": 1920
