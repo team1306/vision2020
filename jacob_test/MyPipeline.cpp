@@ -15,10 +15,14 @@ const double MyPipeline::horizontalFOV = 62.2; // Horizontal field of view of th
 MyPipeline::MyPipeline()
     : contourResults()
 {
+    robotHeading = nt::NetworkTableInstance::getDefault().getEntry("robot/heading");
 }
 
 void MyPipeline::Process(cv::Mat &mat)
 {
+    //grab heading for mat, defaulting to old heading
+    imageCaptureHeading = robotHeading.getDouble(imageCaptureHeading);
+
     // wpi::outs() << "Received frame with " << mat.channels() << " channels and size " << mat.cols << "x" << mat.rows << "\n";
 
     thresholdHSV(mat, mat, thresh_hue, thresh_sat, thresh_val);

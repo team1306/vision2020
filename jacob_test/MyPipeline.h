@@ -6,12 +6,15 @@
 #include <wpi/raw_ostream.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
+#include <networktables/NetworkTableInstance.h>
+
 
 class MyPipeline : public frc::VisionPipeline
 {
 public:
     double returnedDistance = -1;
     double returnedHorizAngle = -1;
+    double imageCaptureHeading = 0;
 
     MyPipeline();
     void Process(cv::Mat &mat) override;
@@ -38,6 +41,8 @@ private:
     double boundingPoints[4];
 
     std::vector<std::vector<cv::Point>> contourResults;
+
+    nt::NetworkTableEntry robotHeading;
 
     void thresholdHSV(cv::Mat &input, cv::Mat &output,
                       const double hue[], const double sat[], const double val[]);
