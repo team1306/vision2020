@@ -273,6 +273,8 @@ int main(int argc, char* argv[]) {
 
   // start NetworkTables
   auto ntinst = nt::NetworkTableInstance::GetDefault();
+  nt::NetworkTableEntry angleEntry = ntinst.getEntry("vision/angle");
+  nt::NetworkTableEntry distanceEntry = ntinst.getEntry("vision/distance");
   if (server) {
     wpi::outs() << "Setting up NetworkTables server\n";
     ntinst.StartServer();
@@ -293,7 +295,13 @@ int main(int argc, char* argv[]) {
     std::thread([&] {
       frc::VisionRunner<MyPipeline> runner(cameras[0], new MyPipeline(),
                                            [&](MyPipeline &pipeline) {
-        // do something with pipeline results
+        //get pipeline results
+        double dist = pipeline.returnedDistance;
+        double angle = pipeline.returnedHorizAngle;
+        double goalHeading = pipeline.imageCaptureHeading+angle;
+
+        angleEntry.SetDouble(goalHeading);
+        distanceEntry.SetDouble(dist);
       });
       /* something like this for GRIP:
       frc::VisionRunner<MyPipeline> runner(cameras[0], new grip::GripPipeline(),
