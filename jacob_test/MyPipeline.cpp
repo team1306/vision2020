@@ -1,8 +1,8 @@
 #include "MyPipeline.h"
 
-const double MyPipeline::thresh_hue[] = {65, 81};
-const double MyPipeline::thresh_sat[] = {0, 255};
-const double MyPipeline::thresh_val[] = {30, 255};
+const double MyPipeline::thresh_hue[] = {55, 63};
+const double MyPipeline::thresh_sat[] = {254, 255};
+const double MyPipeline::thresh_val[] = {33, 137};
 
 const int MyPipeline::erosionSize = 0;
 const int MyPipeline::dilationSize = 2;
@@ -69,11 +69,13 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
     int bestScore = 0;
     for (long unsigned i = 0; i < output.size(); i++)
     {
-        int score = contourScore(output[i]);
-        if (score > bestScore)
+//      int score = contourScore(output[i]);
+//      if (score > bestScore)
+        
+        if (contourArea(output[i]) >= 480)
         {
             goodContour = output[i];
-            bestScore = score;
+//          bestScore = score;
         }
     }
     if (bestScore > 0)
