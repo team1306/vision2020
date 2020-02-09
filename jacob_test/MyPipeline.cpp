@@ -62,22 +62,26 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
 {
     std::vector<std::vector<cv::Point>> goodContours;
     cv::Mat copy = input.clone();
-	std::vector<cv::Vec4i> hierarchy;
+    std::vector<cv::Vec4i> hierarchy;
     findContours(copy, output, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
+    std::vector<cv::Point> goodContour;
+    int bestScore = 0;
     for (long unsigned i = 0; i < output.size(); i++)
     {
+//      int score = contourScore(output[i]);
+//      if (score > bestScore)
+        
         if (contourArea(output[i]) >= 480)
         {
-            goodContours.push_back(output[i]);
+            goodContour = output[i];
+//          bestScore = score;
         }
-
     }
-
-    if (goodContours.size() == 1)
+    if (bestScore > 0)
     {
         std::vector<cv::Rect> boundRect(1);
-        boundRect[0] = boundingRect(goodContours[0]);
+        boundRect[0] = boundingRect(goodContour);
 
         boundingPoints[0] = boundRect[0].tl().x;
         boundingPoints[1] = boundRect[0].br().y;
@@ -86,8 +90,21 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
     }
     else
     {
-        wpi::outs() << "More than one contour, can't make a bounding box\n";
+        wpi::outs() << "No contours, can't make a bounding box\n";
     }
+}
+
+/**
+ * A method for evaluating the probability that a contour is the half-hexagon target.
+ * 
+ * Used for a selection sort to determine the best contour in drawAndUpdate(). If a hard-constraint
+ * is not met, a negative score may be returned; if all contours score negative or zero, it will be
+ * treated as if no contours were found.
+ */
+int contourScore(std::vector<cv::Point> contour)
+{
+    const int minArea = 1000;
+    return contourArea(contour)- minArea; //simple score, scaling directly with area
 }
 
 double MyPipeline::pxToDegrees(double pixel, int orientation, int imageWidth, int imageHeight) //0 for horizontal 1 for vertical
@@ -125,7 +142,7 @@ void MyPipeline::trajectory(cv::Mat &input)
 double MyPipeline::getDistance(int imageWidth, int imageHeight)
 {
 
-    int camTheta = imageHeight - boundingPoints[3];                // Pixel distance between the bottom of the bounding box and bottom of the frame
+    int camTheta = imageHeight - boundingPoints[3]; // Pixel distance between the bottom of the bounding box and bottom of the frame
     targetTheta = pxToDegrees(camTheta, 1, imageWidth, imageHeight) + angleOffset;
     targetDistance = targetHeight * atan(targetTheta);
     return targetDistance;
