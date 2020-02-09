@@ -62,18 +62,18 @@ void *data;
 // int dialationSize = 2;
 
 // set highs and lows for hsv - underexposed pi camera images
-int iLowH = 65;
-int iHighH = 81;
-int iLowS = 0;
+int iLowH = 55;
+int iHighH = 63;
+int iLowS = 254;
 int iHighS = 255;
-int iLowV = 40;
-int iHighV = 255;
+int iLowV = 33;
+int iHighV = 137;
 int erosionSize = 0;
 int dialationSize = 2;
 
 bool toErase = false;
-int areaMin = 30; // get rid of tiny noise
-int areaMax = 1000;
+int areaMin = 480; // get rid of tiny noise
+int areaMax = 15000;
 int verticesMin = 25;
 int verticesMax = 5000;
 int aspectMin = 0;
@@ -325,8 +325,8 @@ void drawAndUpdate(int pos, void *data)
         circle(imgDraw, rectCenterPt, 3, color - Scalar(40, 40, 40), 1, LINE_8);
 
         //draw vars on screen
-        putText(imgDraw, "Area: " + std::to_string(contour_area), boundRect[i].tl() + Point(0, -5), FONT_HERSHEY_PLAIN, .5, color, 2, LINE_AA, false);
-        putText(imgDraw, "Vertices: " + std::to_string(contour_verts), boundRect[i].tl() + Point(0, -30), FONT_HERSHEY_PLAIN, .5, color, 2, LINE_AA, false);
+        putText(imgDraw, "Area: " + std::to_string(contour_area), boundRect[i].tl() + Point(0, -5), FONT_HERSHEY_PLAIN, 2, color, 2, LINE_AA, false);
+        putText(imgDraw, "Vertices: " + std::to_string(contour_verts), boundRect[i].tl() + Point(0, -30), FONT_HERSHEY_PLAIN, 2, color, 2, LINE_AA, false);
 
         //draw vertice points
         for (long unsigned j = 0; j < polyContours.size(); j++)
