@@ -273,8 +273,8 @@ int main(int argc, char* argv[]) {
 
   // start NetworkTables
   auto ntinst = nt::NetworkTableInstance::GetDefault();
-  nt::NetworkTableEntry angleEntry = ntinst.getEntry("vision/angle");
-  nt::NetworkTableEntry distanceEntry = ntinst.getEntry("vision/distance");
+  nt::NetworkTableEntry angleEntry = ntinst.GetEntry("vision/angle");
+  nt::NetworkTableEntry distanceEntry = ntinst.GetEntry("vision/distance");
   if (server) {
     wpi::outs() << "Setting up NetworkTables server\n";
     ntinst.StartServer();

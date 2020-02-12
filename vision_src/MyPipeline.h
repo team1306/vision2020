@@ -8,6 +8,7 @@
 #include <opencv2/imgproc.hpp>
 #include <networktables/NetworkTableInstance.h>
 
+#include <string>
 
 class MyPipeline : public frc::VisionPipeline
 {
@@ -18,6 +19,8 @@ public:
 
     MyPipeline();
     void Process(cv::Mat &mat) override;
+
+    int contourScore(std::vector<cv::Point> &contour);
 
 private:
     double targetDistance = 0;       // dx in image
@@ -38,11 +41,15 @@ private:
     static const int erosionSize;
     static const int dilationSize;
 
+	std::string ledString;
+
     double boundingPoints[4];
 
     std::vector<std::vector<cv::Point>> contourResults;
 
     nt::NetworkTableEntry robotHeading;
+
+	nt::NetworkTableEntry ledEntry;
 
     void thresholdHSV(cv::Mat &input, cv::Mat &output,
                       const double hue[], const double sat[], const double val[]);
@@ -60,6 +67,8 @@ private:
     double getDistance(int imageWidth, int imageHeight);
 
     double getHorizontalAngle(int imageWidth, int imageHeight);
+
+	void sendLed(int r, int g, int b);
 };
 
 #endif

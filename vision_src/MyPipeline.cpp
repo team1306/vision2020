@@ -2,7 +2,7 @@
 
 const double MyPipeline::thresh_hue[] = {55, 63};
 const double MyPipeline::thresh_sat[] = {254, 255};
-const double MyPipeline::thresh_val[] = {33, 137};
+const double MyPipeline::thresh_val[] = {33, 188};
 
 const int MyPipeline::erosionSize = 0;
 const int MyPipeline::dilationSize = 2;
@@ -15,13 +15,13 @@ const double MyPipeline::horizontalFOV = 62.2; // Horizontal field of view of th
 MyPipeline::MyPipeline()
     : contourResults()
 {
-    robotHeading = nt::NetworkTableInstance::getDefault().getEntry("robot/heading");
+    robotHeading = nt::NetworkTableInstance::GetDefault().GetEntry("robot/heading");
 }
 
 void MyPipeline::Process(cv::Mat &mat)
 {
     //grab heading for mat, defaulting to old heading
-    imageCaptureHeading = robotHeading.getDouble(imageCaptureHeading);
+    imageCaptureHeading = robotHeading.GetDouble(imageCaptureHeading);
 
     // wpi::outs() << "Received frame with " << mat.channels() << " channels and size " << mat.cols << "x" << mat.rows << "\n";
 
@@ -64,26 +64,30 @@ void MyPipeline::dilateSize(cv::Mat &input, cv::Mat &output, int size)
 
 void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point>> &output)
 {
-    std::vector<std::vector<cv::Point>> goodContours;
-    cv::Mat copy = input.clone();
-    std::vector<cv::Vec4i> hierarchy;
-    findContours(copy, output, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+  std::vector<std::vector<cv::Point>> goodContours;
+  cv::Mat copy = input.clone();
+  std::vector<cv::Vec4i> hierarchy;
+  findContours(copy, output, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-    std::vector<cv::Point> goodContour;
-    int bestScore = 0;
-    for (long unsigned i = 0; i < output.size(); i++)
-    {
-//      int score = contourScore(output[i]);
-//      if (score > bestScore)
-        
-        if (contourArea(output[i]) >= 480)
-        {
-            goodContour = output[i];
-//          bestScore = score;
-        }
-    }
-    if (bestScore > 0)
-    {
+  std::vector<cv::Point> goodContour;
+
+  int bestScore = 0;
+   
+  for (long unsigned i = 0; i < output.size(); i++)
+  {
+    int score = contourScore(output[i]);
+    if (score > bestScore)
+    {   
+    //      if (contourArea(output[i]) >= 480)
+    //      {
+    goodContour = output[i];
+    bestScore = score;
+  //      }
+  }
+}//for loop
+
+if (bestScore > 0)
+  {
         std::vector<cv::Rect> boundRect(1);
         boundRect[0] = boundingRect(goodContour);
 
@@ -91,11 +95,11 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
         boundingPoints[1] = boundRect[0].br().y;
         boundingPoints[2] = boundRect[0].br().x;
         boundingPoints[3] = boundRect[0].br().y;
-    }
-    else
-    {
+  }
+  else
+  {
         wpi::outs() << "No contours, can't make a bounding box\n";
-    }
+  }
 }
 
 /**
@@ -105,10 +109,10 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
  * is not met, a negative score may be returned; if all contours score negative or zero, it will be
  * treated as if no contours were found.
  */
-int contourScore(std::vector<cv::Point> contour)
+int MyPipeline::contourScore(std::vector<cv::Point> &contour)
 {
-    const int minArea = 1000;
-    return contourArea(contour)- minArea; //simple score, scaling directly with area
+    const int minArea = 500;
+    return contourArea(contour) - minArea; //simple score, scaling directly with area
 }
 
 double MyPipeline::pxToDegrees(double pixel, int orientation, int imageWidth, int imageHeight) //0 for horizontal 1 for vertical
@@ -158,4 +162,11 @@ double MyPipeline::getHorizontalAngle(int imageWidth, int imageHeight)
     imageMidpointX = imageWidth / 2; //this might break bc even # of pixels
     yawOffset = imageMidpointX - boundingBoxMidpointX;
     return pxToDegrees(yawOffset, 0, imageWidth, imageHeight);
+}
+
+void MyPipeline::sendLed(int r, int g, int b){
+	ledString = std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
+	wpi::outs() << "Settings LEDs to " << ledString << "\n";
+	
+	ledEntry.SetString(ledString);
 }
