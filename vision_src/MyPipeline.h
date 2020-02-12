@@ -20,7 +20,6 @@ public:
     MyPipeline();
     void Process(cv::Mat &mat) override;
 
-    int contourScore(std::vector<cv::Point> &contour);
 
 private:
     double targetDistance = 0;       // dx in image
@@ -67,6 +66,8 @@ private:
     double getDistance(int imageWidth, int imageHeight);
 
     double getHorizontalAngle(int imageWidth, int imageHeight);
+    
+    int contourScore(std::vector<cv::Point> &contour);
 
 	void sendLed(int r, int g, int b);
 };

@@ -64,30 +64,30 @@ void MyPipeline::dilateSize(cv::Mat &input, cv::Mat &output, int size)
 
 void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point>> &output)
 {
-  std::vector<std::vector<cv::Point>> goodContours;
-  cv::Mat copy = input.clone();
-  std::vector<cv::Vec4i> hierarchy;
-  findContours(copy, output, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+    std::vector<std::vector<cv::Point>> goodContours;
+    cv::Mat copy = input.clone();
+    std::vector<cv::Vec4i> hierarchy;
+    findContours(copy, output, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-  std::vector<cv::Point> goodContour;
+    std::vector<cv::Point> goodContour;
 
-  int bestScore = 0;
-   
-  for (long unsigned i = 0; i < output.size(); i++)
-  {
-    int score = contourScore(output[i]);
-    if (score > bestScore)
-    {   
-    //      if (contourArea(output[i]) >= 480)
-    //      {
-    goodContour = output[i];
-    bestScore = score;
-  //      }
-  }
-}//for loop
+    int bestScore = 0;
 
-if (bestScore > 0)
-  {
+    for (long unsigned i = 0; i < output.size(); i++)
+    {
+        int score = contourScore(output[i]);
+        if (score > bestScore)
+        {   
+            //      if (contourArea(output[i]) >= 480)
+            //      {
+            goodContour = output[i];
+            bestScore = score;
+            //      }
+        }
+    }//for loop
+
+    if (bestScore > 0)
+    {
         std::vector<cv::Rect> boundRect(1);
         boundRect[0] = boundingRect(goodContour);
 
@@ -95,11 +95,11 @@ if (bestScore > 0)
         boundingPoints[1] = boundRect[0].br().y;
         boundingPoints[2] = boundRect[0].br().x;
         boundingPoints[3] = boundRect[0].br().y;
-  }
-  else
-  {
+    }
+    else
+    {
         wpi::outs() << "No contours, can't make a bounding box\n";
-  }
+    }
 }
 
 /**
@@ -165,8 +165,8 @@ double MyPipeline::getHorizontalAngle(int imageWidth, int imageHeight)
 }
 
 void MyPipeline::sendLed(int r, int g, int b){
-	ledString = std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
-	wpi::outs() << "Settings LEDs to " << ledString << "\n";
-	
-	ledEntry.SetString(ledString);
+    ledString = std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
+    wpi::outs() << "Settings LEDs to " << ledString << "\n";
+    
+    ledEntry.SetString(ledString);
 }
