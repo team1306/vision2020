@@ -16,10 +16,13 @@ MyPipeline::MyPipeline()
     : contourResults()
 {
     robotHeading = nt::NetworkTableInstance::GetDefault().GetEntry("robot/heading");
+    ledEntry = nt::NetworkTableInstance::GetDefault().GetEntry("vision/status color");
 }
 
 void MyPipeline::Process(cv::Mat &mat)
 {
+    size_t contours_count = -1;
+
     //grab heading for mat, defaulting to old heading
     imageCaptureHeading = robotHeading.GetDouble(imageCaptureHeading);
 
@@ -32,7 +35,22 @@ void MyPipeline::Process(cv::Mat &mat)
     drawAndUpdate(mat, contourResults);
 
     trajectory(mat);
-    wpi::outs() << "Contours count: " << contourResults.size() << "\n";
+
+    contours_count = contourResults.size();
+    wpi::outs() << "Contours count: " << contours_count << "\n";
+    if(contours_count == 1)
+    {
+        sendLed(255, 0, 255);
+    }
+    else if(contours_count > 1)
+    {
+        sendLed(255, 0, 0);
+    }
+    if(contours_count == 0)
+    {
+        sendLed(0, 0, 255);
+    }
+
 
     // Did the math...main.cpp will send these to RIO
 }
