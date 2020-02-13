@@ -40,15 +40,15 @@ void MyPipeline::Process(cv::Mat &mat)
     wpi::outs() << "Contours count: " << contours_count << "\n";
     if(contours_count == 1)
     {
-        sendLed(255, 0, 255);
+        sendLed(0, 0, 255); //Blue
     }
     else if(contours_count > 1)
     {
-        sendLed(255, 0, 0);
+        sendLed(255, 128, 255); //Purple
     }
     if(contours_count == 0)
     {
-        sendLed(0, 0, 255);
+        sendLed(0, 0, 0); //Off
     }
 
 
