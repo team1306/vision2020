@@ -8,9 +8,9 @@ const int MyPipeline::erosionSize = 0;
 const int MyPipeline::dilationSize = 2;
 
 const double MyPipeline::targetHeight = 78.5;  // dy in image - from target height to camera height (e.g. 500cm)
-const double MyPipeline::angleOffset = 60.0;   // Angle that the camera is set to relative the ground (e.g. perpendicular to the ground is 90deg)
-const double MyPipeline::verticalFOV = 48.8;   // Vertical field of view of the camera
-const double MyPipeline::horizontalFOV = 62.2; // Horizontal field of view of the camera
+const double MyPipeline::angleOffset = toRadians(60.0);   // Angle that the camera is set to relative the ground (e.g. perpendicular to the ground is 90deg)
+const double MyPipeline::verticalFOV = toRadians(48.8);   // Vertical field of view of the camera
+const double MyPipeline::horizontalFOV = toRadians(62.2); // Horizontal field of view of the camera
 
 MyPipeline::MyPipeline()
     : contourResults()
@@ -110,7 +110,7 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
         boundRect[0] = boundingRect(goodContour);
 
         boundingPoints[0] = boundRect[0].tl().x;
-        boundingPoints[1] = boundRect[0].br().y;
+        boundingPoints[1] = boundRect[0].tl().y;
         boundingPoints[2] = boundRect[0].br().x;
         boundingPoints[3] = boundRect[0].br().y;
     }
@@ -133,7 +133,7 @@ int MyPipeline::contourScore(std::vector<cv::Point> &contour)
     return contourArea(contour) - minArea; //simple score, scaling directly with area
 }
 
-double MyPipeline::pxToDegrees(double pixel, int orientation, int imageWidth, int imageHeight) //0 for horizontal 1 for vertical
+double MyPipeline::pxToRadians(double pixel, int orientation, int imageWidth, int imageHeight) //0 for horizontal 1 for vertical
 {
     if (orientation == 1) //vertical
     {
@@ -145,7 +145,7 @@ double MyPipeline::pxToDegrees(double pixel, int orientation, int imageWidth, in
     }
     else
     {
-        wpi::outs() << "pxToDegrees called incorrectly\n";
+        wpi::outs() << "pxToRadians called incorrectly\n";
         return -1;
     }
 }
@@ -162,24 +162,33 @@ void MyPipeline::trajectory(cv::Mat &input)
     int imageHeight = input.rows; // image height
 
     returnedDistance = getDistance(imageWidth, imageHeight);
-    returnedHorizAngle = getHorizontalAngle(imageWidth, imageHeight);
+    returnedHorizAngle = getHorizontalAngleDeg(imageWidth, imageHeight) * (180.0 / PI);
 }
 
 double MyPipeline::getDistance(int imageWidth, int imageHeight)
 {
-
-    int camTheta = imageHeight - boundingPoints[3]; // Pixel distance between the bottom of the bounding box and bottom of the frame
-    targetTheta = pxToDegrees(camTheta, 1, imageWidth, imageHeight) + angleOffset;
-    targetDistance = targetHeight * atan(targetTheta);
+    int boxHeight = imageHeight - boundingPoints[3]; // Pixel distance between the bottom of the bounding box and bottom of the frame
+    targetTheta = pxToRadians(camTheta, 1, imageWidth, imageHeight) + angleOffset;
+    targetDistance = targetHeight / tan(targetTheta); // TODO Catch 0 denominator
     return targetDistance;
+}
+
+double MyPipeline::toRadians(double deg) const
+{
+    return deg * (PI / 180.0);
+}
+
+double MyPipeline::toDegrees(double rad) const
+{
+    return rad * (180.0 / PI);
 }
 
 double MyPipeline::getHorizontalAngle(int imageWidth, int imageHeight)
 {
-    boundingBoxMidpointX = (boundingPoints[0] + boundingPoints[3]) / 2;
+    boundingBoxMidpointX = (boundingPoints[0] + boundingPoints[2]) / 2;
     imageMidpointX = imageWidth / 2; //this might break bc even # of pixels
     yawOffset = imageMidpointX - boundingBoxMidpointX;
-    return pxToDegrees(yawOffset, 0, imageWidth, imageHeight);
+    return pxToRadians(yawOffset, 0, imageWidth, imageHeight);
 }
 
 void MyPipeline::sendLed(int r, int g, int b){

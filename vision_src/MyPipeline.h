@@ -1,20 +1,23 @@
 #ifndef MY_PIPELINE_H
 #define MY_PIPELINE_H
 
-#include <vector>
-#include <vision/VisionPipeline.h>
-#include <wpi/raw_ostream.h>
+#define PI 3.1415926
+
+#include <networktables/NetworkTableInstance.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc.hpp>
-#include <networktables/NetworkTableInstance.h>
+#include <vision/VisionPipeline.h>
+#include <wpi/raw_ostream.h>
 
+#include <cmath>
 #include <string>
+#include <vector>
 
 class MyPipeline : public frc::VisionPipeline
 {
 public:
     double returnedDistance = -1;
-    double returnedHorizAngle = -1;
+    double returnedHorizAngleDeg = -1;
     double imageCaptureHeading = 0;
 
     MyPipeline();
@@ -50,6 +53,10 @@ private:
 
 	nt::NetworkTableEntry ledEntry;
 
+    static double toRadians(double deg) const;
+    
+    static double toDegrees(double rad) const;
+
     void thresholdHSV(cv::Mat &input, cv::Mat &output,
                       const double hue[], const double sat[], const double val[]);
 
@@ -61,7 +68,7 @@ private:
 
     void trajectory(cv::Mat &input);
 
-	double pxToDegrees(double pixel, int orientation, int imageWidth, int imageHeight);
+	double pxToRadians(double pixel, int orientation, int imageWidth, int imageHeight);
 
     double getDistance(int imageWidth, int imageHeight);
 

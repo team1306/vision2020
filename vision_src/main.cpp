@@ -297,7 +297,7 @@ int main(int argc, char* argv[]) {
                                            [&](MyPipeline &pipeline) {
         //get pipeline results
         double dist = pipeline.returnedDistance;
-        double angle = pipeline.returnedHorizAngle;
+        double angle = pipeline.returnedHorizAngleDeg;
         double goalHeading = pipeline.imageCaptureHeading+angle;
 
         angleEntry.SetDouble(goalHeading);
