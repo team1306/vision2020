@@ -23,14 +23,13 @@ public:
     MyPipeline();
     void Process(cv::Mat &mat) override;
 
-
 private:
     double targetDistance = 0;       // dx in image
     double targetTheta = 0;          // Red theta in image
     double boundingBoxMidpointX = 0; // Midpoint of the bounding box on the X axis
     double imageMidpointX = 0;       // Midpoint of the image on the X axis
     double yawOffset = 0;            // Yaw offset in degrees
-	
+
     static const double targetHeight;
     static const double angleOffset;
     static const double verticalFOV;
@@ -43,7 +42,7 @@ private:
     static const int erosionSize;
     static const int dilationSize;
 
-	std::string ledString;
+    std::string ledString;
 
     double boundingPoints[4];
 
@@ -51,11 +50,11 @@ private:
 
     nt::NetworkTableEntry robotHeading;
 
-	nt::NetworkTableEntry ledEntry;
+    nt::NetworkTableEntry ledEntry;
 
-    static double toRadians(double deg) const;
-    
-    static double toDegrees(double rad) const;
+    static double toRadians(double deg);
+
+    static double toDegrees(double rad);
 
     void thresholdHSV(cv::Mat &input, cv::Mat &output,
                       const double hue[], const double sat[], const double val[]);
@@ -68,15 +67,15 @@ private:
 
     void trajectory(cv::Mat &input);
 
-	double pxToRadians(double pixel, int orientation, int imageWidth, int imageHeight);
+    double pxToRadians(double pixel, int orientation, int imageWidth, int imageHeight);
 
     double getDistance(int imageWidth, int imageHeight);
 
-    double getHorizontalAngle(int imageWidth, int imageHeight);
-    
+    double getHorizontalAngleRad(int imageWidth, int imageHeight);
+
     int contourScore(std::vector<cv::Point> &contour);
 
-	void sendLed(int r, int g, int b);
+    void sendLed(int r, int g, int b);
 };
 
 #endif

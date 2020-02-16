@@ -7,10 +7,19 @@ const double MyPipeline::thresh_val[] = {33, 188};
 const int MyPipeline::erosionSize = 0;
 const int MyPipeline::dilationSize = 2;
 
-const double MyPipeline::targetHeight = 78.5;  // dy in image - from target height to camera height (e.g. 500cm)
-const double MyPipeline::angleOffset = toRadians(60.0);   // Angle that the camera is set to relative the ground (e.g. perpendicular to the ground is 90deg)
-const double MyPipeline::verticalFOV = toRadians(48.8);   // Vertical field of view of the camera
-const double MyPipeline::horizontalFOV = toRadians(62.2); // Horizontal field of view of the camera
+const double MyPipeline::verticalFOV = toRadians(48.8);                     // Vertical field of view of the camera
+const double MyPipeline::horizontalFOV = toRadians(62.2);                   // Horizontal field of view of the camera
+const double MyPipeline::targetToCameraHeight = 38.5;                       // dy in image - from target height to camera height (e.g. 50in)
+const double MyPipeline::angleOffset = toRadians(45); //angle offset, see example below 
+
+/**
+ *  \   60deg
+ *   \
+ *    \  <---camera tilted back 60deg from vertical... angleOffset = toRadians(60);
+ *     \
+ * 30deg\
+ *  ---------
+**/
 
 MyPipeline::MyPipeline()
     : contourResults()
@@ -37,20 +46,19 @@ void MyPipeline::Process(cv::Mat &mat)
     trajectory(mat);
 
     contours_count = contourResults.size();
-    wpi::outs() << "Contours count: " << contours_count << "\n";
-    if(contours_count == 1)
+    wpi::outs() << "\n" << "Contours count: " << contours_count << "\n";
+    if (contours_count == 1)
     {
         sendLed(0, 0, 255); //Blue
     }
-    else if(contours_count > 1)
+    else if (contours_count > 1)
     {
         sendLed(255, 128, 255); //Purple
     }
-    if(contours_count == 0)
+    if (contours_count == 0)
     {
         sendLed(0, 0, 0); //Off
     }
-
 
     // Did the math...main.cpp will send these to RIO
 }
@@ -95,14 +103,14 @@ void MyPipeline::drawAndUpdate(cv::Mat &input, std::vector<std::vector<cv::Point
     {
         int score = contourScore(output[i]);
         if (score > bestScore)
-        {   
+        {
             //      if (contourArea(output[i]) >= 480)
             //      {
             goodContour = output[i];
             bestScore = score;
             //      }
         }
-    }//for loop
+    } //for loop
 
     if (bestScore > 0)
     {
@@ -137,11 +145,11 @@ double MyPipeline::pxToRadians(double pixel, int orientation, int imageWidth, in
 {
     if (orientation == 1) //vertical
     {
-        return atan(pixel - (imageHeight / 2)) * (verticalFOV / imageHeight);
+        return (pixel - (imageHeight / 2)) * (verticalFOV / imageHeight);
     }
     else if (orientation == 0) //horizontal
     {
-        return atan(pixel - (imageWidth / 2)) * (horizontalFOV / imageWidth);
+        return (pixel - (imageWidth / 2)) * (horizontalFOV / imageWidth);
     }
     else
     {
@@ -162,38 +170,52 @@ void MyPipeline::trajectory(cv::Mat &input)
     int imageHeight = input.rows; // image height
 
     returnedDistance = getDistance(imageWidth, imageHeight);
-    returnedHorizAngle = getHorizontalAngleDeg(imageWidth, imageHeight) * (180.0 / PI);
+    returnedHorizAngleDeg = toDegrees(getHorizontalAngleRad(imageWidth, imageHeight));
+
+	wpi::outs() << "Distance: " << returnedDistance << "\n";
+	wpi::outs() << "Angle: " << returnedHorizAngleDeg << "\n";
 }
 
 double MyPipeline::getDistance(int imageWidth, int imageHeight)
 {
     int boxHeight = imageHeight - boundingPoints[3]; // Pixel distance between the bottom of the bounding box and bottom of the frame
-    targetTheta = pxToRadians(camTheta, 1, imageWidth, imageHeight) + angleOffset;
-    targetDistance = targetHeight / tan(targetTheta); // TODO Catch 0 denominator
+    targetTheta = pxToRadians(boxHeight, 1, imageWidth, imageHeight) + angleOffset;
+    if (tan(targetTheta) != 0)
+    {
+        targetDistance = targetToCameraHeight / tan(targetTheta); // TODO Catch 0 denominator
+    }
+    else
+    {
+        wpi::outs() << "tan(targetTheta) is equal to zero, this is not good\n";
+    }
     return targetDistance;
 }
 
-double MyPipeline::toRadians(double deg) const
+double MyPipeline::toRadians(double deg)
 {
     return deg * (PI / 180.0);
 }
 
-double MyPipeline::toDegrees(double rad) const
+double MyPipeline::toDegrees(double rad)
 {
     return rad * (180.0 / PI);
 }
 
-double MyPipeline::getHorizontalAngle(int imageWidth, int imageHeight)
+double MyPipeline::getHorizontalAngleRad(int imageWidth, int imageHeight)
 {
     boundingBoxMidpointX = (boundingPoints[0] + boundingPoints[2]) / 2;
-    imageMidpointX = imageWidth / 2; //this might break bc even # of pixels
-    yawOffset = imageMidpointX - boundingBoxMidpointX;
-    return pxToRadians(yawOffset, 0, imageWidth, imageHeight);
+    imageMidpointX = imageWidth / 2.0;
+    
+    // yawOffset = imageMidpointX - boundingBoxMidpointX;
+    yawOffset = boundingBoxMidpointX;
+
+	return pxToRadians(yawOffset, 0, imageWidth, imageHeight);
 }
 
-void MyPipeline::sendLed(int r, int g, int b){
+void MyPipeline::sendLed(int r, int g, int b)
+{
     ledString = std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
     wpi::outs() << "Settings LEDs to " << ledString << "\n";
-    
+
     ledEntry.SetString(ledString);
 }
