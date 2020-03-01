@@ -30,7 +30,7 @@ private:
     double imageMidpointX = 0;       // Midpoint of the image on the X axis
     double yawOffset = 0;            // Yaw offset in degrees
 
-    static const double targetHeight;
+    static const double targetToCameraHeight;
     static const double angleOffset;
     static const double verticalFOV;
     static const double horizontalFOV;
