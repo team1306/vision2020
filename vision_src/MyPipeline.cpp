@@ -1,16 +1,59 @@
 #include "MyPipeline.h"
 
-const double MyPipeline::thresh_hue[] = {55, 63};
-const double MyPipeline::thresh_sat[] = {254, 255};
-const double MyPipeline::thresh_val[] = {33, 188};
+const std::string cameraType = "lifecam_camera"; //changes fov and thesholding vars based on camera. Choices are 'lifecam_camera' 'pi_camera' and 'logitech_camera'
+
+if(cameraType == "lifecam_camera"){
+		//thresholding values, based on each camera
+		const double MyPipeline::thresh_hue[] = {55, 63};
+		const double MyPipeline::thresh_sat[] = {254, 255};
+		const double MyPipeline::thresh_val[] = {33, 188};
+
+		// Vertical and Horizontal FOV, based on each camera
+		const double MyPipeline::verticalFOV = toRadians(36.2);                     // Vertical field of view of the camera
+		const double MyPipeline::horizontalFOV = toRadians(64.4);                   // Horizontal field of view of the camera
+
+		const double MyPipeline::angleOffset = toRadians(25); //angle offset, see example below 
+}else if(cameraType == "pi_camera"){
+		//thresholding values, based on each camera
+		const double MyPipeline::thresh_hue[] = {55, 63};
+		const double MyPipeline::thresh_sat[] = {254, 255};
+		const double MyPipeline::thresh_val[] = {33, 188};
+
+		// Vertical and Horizontal FOV, based on each camera
+		const double MyPipeline::verticalFOV = toRadians(48.8);                     // Vertical field of view of the camera
+		const double MyPipeline::horizontalFOV = toRadians(62.2);                   // Horizontal field of view of the camera
+
+		const double MyPipeline::angleOffset = toRadians(25); //angle offset, see example below 
+}else if(cameraType == "logitech_camera"){
+		//thresholding values, based on each camera
+		const double MyPipeline::thresh_hue[] = {55, 63};
+		const double MyPipeline::thresh_sat[] = {254, 255};
+		const double MyPipeline::thresh_val[] = {33, 188};
+
+		// Vertical and Horizontal FOV, based on each camera
+		const double MyPipeline::verticalFOV = toRadians(48.8);                     // Vertical field of view of the camera
+		const double MyPipeline::horizontalFOV = toRadians(62.2);                   // Horizontal field of view of the camera
+
+		const double MyPipeline::angleOffset = toRadians(25); //angle offset, see example below 
+}else{
+		//sets to pi camera values
+		//thresholding values, based on each camera
+		const double MyPipeline::thresh_hue[] = {55, 63};
+		const double MyPipeline::thresh_sat[] = {254, 255};
+		const double MyPipeline::thresh_val[] = {33, 188};
+
+		// Vertical and Horizontal FOV, based on each camera
+		const double MyPipeline::verticalFOV = toRadians(48.8);                     // Vertical field of view of the camera
+		const double MyPipeline::horizontalFOV = toRadians(62.2);                   // Horizontal field of view of the camera
+
+		const double MyPipeline::angleOffset = toRadians(25); //angle offset, see example below 
+}
+
+
+const double MyPipeline::targetToCameraHeight = 38.5;                       // dy in image - from target height to camera height (e.g. 50in)
 
 const int MyPipeline::erosionSize = 0;
 const int MyPipeline::dilationSize = 2;
-
-const double MyPipeline::verticalFOV = toRadians(48.8);                     // Vertical field of view of the camera
-const double MyPipeline::horizontalFOV = toRadians(62.2);                   // Horizontal field of view of the camera
-const double MyPipeline::targetToCameraHeight = 38.5;                       // dy in image - from target height to camera height (e.g. 50in)
-const double MyPipeline::angleOffset = toRadians(45); //angle offset, see example below 
 
 /**
  *  \   60deg
@@ -214,7 +257,8 @@ double MyPipeline::getHorizontalAngleRad(int imageWidth, int imageHeight)
 
 void MyPipeline::sendLed(int r, int g, int b)
 {
-    ledString = std::to_string(r) + " " + std::to_string(g) + " " + std::to_string(b);
+	//TODO: make this neater, right now we're just swapping the b and g since our leds take RBG not RGB
+	ledString = std::to_string(r) + " " + std::to_string(b) + " " + std::to_string(g);
     wpi::outs() << "Settings LEDs to " << ledString << "\n";
 
     ledEntry.SetString(ledString);
